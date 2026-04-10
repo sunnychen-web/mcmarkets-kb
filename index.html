@@ -1,0 +1,540 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MC Markets Sunny's KB</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root { --bg:#0a0f1e; --bg2:#111827; --bg3:#1e293b; --border:#2d3748; --text:#e2e8f0; --muted:#64748b; --accent:#f5a623; --red:#ef4444; --green:#10b981; }
+body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-serif; min-height:100vh; }
+nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(10,15,30,0.97); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 16px; height:54px; gap:10px; }
+.logo { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.logo-icon { width:28px; height:28px; background:linear-gradient(135deg,#f5a623,#e8840a); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:14px; }
+.logo-text { font-size:13px; font-weight:800; color:#fff; }
+.logo-sub { font-size:10px; color:var(--muted); }
+.nav-search { display:flex; align-items:center; gap:6px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:5px 10px; flex:1; max-width:380px; }
+.nav-search input { background:none; border:none; outline:none; color:var(--text); font-size:12px; width:100%; }
+.nav-badge { background:var(--accent); color:#000; font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; flex-shrink:0; }
+.layout { display:flex; padding-top:54px; min-height:100vh; }
+.sidebar { width:210px; background:var(--bg2); border-right:1px solid var(--border); position:fixed; top:54px; left:0; bottom:0; overflow-y:auto; padding:10px 0; }
+.sb-sec { padding:7px 12px 2px; font-size:9px; font-weight:700; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+.sb-item { display:flex; align-items:center; gap:7px; padding:6px 12px; cursor:pointer; transition:all 0.15s; font-size:11px; color:var(--muted); border-left:2px solid transparent; }
+.sb-item:hover { background:var(--bg3); color:var(--text); }
+.sb-item.active { background:var(--bg3); color:var(--accent); border-left-color:var(--accent); font-weight:600; }
+.main { margin-left:210px; flex:1; padding:20px; }
+.hero { background:linear-gradient(135deg,#1a2540,#0f172a); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; top:-50%; right:-10%; width:200px; height:200px; background:radial-gradient(circle,rgba(245,166,35,0.08),transparent); border-radius:50%; }
+.hero-tag { display:inline-block; background:rgba(245,166,35,0.15); color:var(--accent); font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; margin-bottom:8px; border:1px solid rgba(245,166,35,0.3); }
+.hero h1 { font-size:20px; font-weight:900; color:#fff; margin-bottom:5px; }
+.hero p { color:var(--muted); font-size:12px; line-height:1.6; max-width:450px; }
+.hero-stats { display:flex; gap:16px; margin-top:14px; flex-wrap:wrap; }
+.stat { text-align:center; }
+.stat-num { font-size:18px; font-weight:900; color:var(--accent); }
+.stat-label { font-size:9px; color:var(--muted); margin-top:1px; }
+.quick-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:8px; margin-bottom:16px; }
+.qc { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px; cursor:pointer; transition:all 0.2s; }
+.qc:hover { border-color:var(--accent); transform:translateY(-1px); }
+.qc-q { font-size:11px; font-weight:700; color:var(--accent); margin-bottom:4px; }
+.qc-a { font-size:10px; color:var(--muted); line-height:1.5; }
+.pg-title { font-size:16px; font-weight:900; color:#fff; margin-bottom:14px; }
+.search-box { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:14px; }
+.ri { padding:9px 0; border-bottom:1px solid var(--border); }
+.ri:last-child { border-bottom:none; }
+.ri-ch { font-size:9px; color:var(--accent); font-weight:700; margin-bottom:2px; }
+.ri-q { font-size:12px; font-weight:700; color:#fff; margin-bottom:3px; }
+.ri-a { font-size:11px; color:var(--muted); line-height:1.5; }
+.no-res { text-align:center; padding:28px; color:var(--muted); font-size:12px; }
+.kb-card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; margin-bottom:8px; overflow:hidden; }
+.kb-hdr { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; cursor:pointer; transition:background 0.15s; }
+.kb-hdr:hover { background:var(--bg3); }
+.kb-ttl { font-size:12px; font-weight:700; color:#fff; }
+.kb-sub { font-size:10px; color:var(--muted); margin-top:1px; }
+.kb-arr { color:var(--muted); font-size:10px; transition:transform 0.2s; }
+.kb-arr.open { transform:rotate(180deg); }
+.kb-body { display:none; padding:0 14px 14px; }
+.kb-body.open { display:block; }
+.qa-tags { display:flex; flex-wrap:wrap; gap:3px; margin-bottom:6px; }
+.qa-tag { font-size:9px; background:var(--bg3); color:var(--muted); padding:1px 5px; border-radius:3px; }
+.qa-a { font-size:11px; color:var(--muted); line-height:1.7; }
+.sc-card { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:8px; }
+.sc-q { font-size:12px; font-weight:700; color:#fbbf24; margin-bottom:7px; }
+.sc-steps { display:flex; flex-direction:column; gap:5px; }
+.sc-step { display:flex; align-items:flex-start; gap:7px; font-size:11px; color:var(--muted); }
+.sn { background:var(--accent); color:#000; font-size:9px; font-weight:800; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.contact-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px; margin-bottom:16px; }
+.contact-card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:14px; }
+.contact-card h3 { font-size:12px; font-weight:700; color:var(--accent); margin-bottom:6px; }
+.contact-card p { font-size:11px; color:var(--muted); line-height:1.6; }
+.contact-card a { color:#60a5fa; text-decoration:none; }
+.hidden { display:none !important; }
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+@media(max-width:768px) { .sidebar{display:none;} .main{margin-left:0;padding:12px;padding-bottom:80px;} }
+.mobile-nav {
+  display:none;
+  position:fixed; bottom:0; left:0; right:0; z-index:200;
+  background:rgba(10,15,30,0.97); backdrop-filter:blur(10px);
+  border-top:1px solid var(--border);
+  padding:10px 16px; gap:10px;
+}
+.mobile-nav button {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px; padding:8px; border-radius:10px; border:1px solid var(--border);
+  background:var(--bg3); color:var(--text); cursor:pointer; font-size:10px; font-weight:600;
+  transition:all 0.2s;
+}
+.mobile-nav button:active { background:var(--accent); color:#000; border-color:var(--accent); }
+.mobile-nav button span { font-size:18px; }
+@media(max-width:768px) { .mobile-nav{display:flex;} }
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">
+    <div class="logo-icon">☀️</div>
+    <div><div class="logo-text">MC Markets</div><div class="logo-sub">Sunny's KB</div></div>
+  </div>
+  <div class="nav-search">
+    <span style="color:#64748b;font-size:12px">🔍</span>
+    <input type="text" id="si" placeholder="搜尋任何問題、術語、情境..." oninput="search()">
+  </div>
+  <div class="nav-badge">客服指南</div>
+</nav>
+
+<div class="layout">
+<div class="sidebar">
+  <div class="sb-sec">主選單</div>
+  <div class="sb-item active" onclick="go('home')">🏠 首頁</div>
+  <div class="sb-item" onclick="go('scenarios')">🎧 客服情境SOP</div>
+  <div class="sb-item" onclick="go('ticket')">📧 工單模板</div>
+  <div class="sb-item" onclick="go('trouble')">🔧 問題排查</div>
+  <div class="sb-item" onclick="go('contact')">📞 聯絡方式</div>
+  <div class="sb-sec">平台知識</div>
+  <div class="sb-item" onclick="go('about')">🌐 關於平台</div>
+  <div class="sb-item" onclick="go('register')">👤 註冊與安全</div>
+  <div class="sb-item" onclick="go('deposit')">💰 入金與出金</div>
+  <div class="sb-item" onclick="go('perps')">📊 合約交易</div>
+  <div class="sb-item" onclick="go('spot')">🛒 現貨交易</div>
+  <div class="sb-item" onclick="go('swap')">🔄 閃兌 Swap</div>
+  <div class="sb-item" onclick="go('earn')">💎 賺取 Earn</div>
+  <div class="sb-item" onclick="go('margin')">🏛️ 保證金與槓桿</div>
+  <div class="sb-item" onclick="go('mlp')">💧 MLP金庫</div>
+  <div class="sb-item" onclick="go('fees')">💸 費用</div>
+  <div class="sb-item" onclick="go('pnl')">📈 損益計算</div>
+  <div class="sb-item" onclick="go('points')">⭐ 積分系統</div>
+  <div class="sb-item" onclick="go('security')">🔒 安全與合規</div>
+  <div class="sb-item" onclick="go('glossary')">📚 術語表</div>
+</div>
+
+<div class="main">
+  <div id="pg-search" class="hidden">
+    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">搜尋：<span id="skw" style="color:#fff;font-weight:700"></span> <span id="scnt" style="color:var(--muted)"></span></div>
+    <div class="search-box" id="sr"></div>
+  </div>
+
+  <!-- HOME -->
+  <div id="pg-home">
+    <div class="hero">
+      <div class="hero-tag">🎧 MC Markets Knowledge Base</div>
+      <h1>Mc Market 知識庫</h1>
+      <p>完整官方FAQ、客服SOP、問題排查指南。入職必讀！</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">17</div><div class="stat-label">知識分類</div></div>
+        <div class="stat"><div class="stat-num">12+</div><div class="stat-label">客服情境</div></div>
+        <div class="stat"><div class="stat-num">150+</div><div class="stat-label">官方FAQ</div></div>
+        <div class="stat"><div class="stat-num">8</div><div class="stat-label">工單模板</div></div>
+      </div>
+    </div>
+    <div style="font-size:12px;font-weight:800;color:#fff;margin-bottom:8px">⚡ 最常遇到的問題（點擊查看）</div>
+    <div class="quick-grid">
+      <div class="qc" onclick="go('deposit')"><div class="qc-q">💰 入金沒到帳？</div><div class="qc-a">請客戶提供TXID，確認網路是否選對</div></div>
+      <div class="qc" onclick="go('margin')"><div class="qc-q">💥 為什麼爆倉？</div><div class="qc-a">保證金比率低於30%，以Mark Price觸發</div></div>
+      <div class="qc" onclick="go('register')"><div class="qc-q">📋 需要KYC嗎？</div><div class="qc-a">加密幣不需要，RWA商品需要至少L0</div></div>
+      <div class="qc" onclick="go('deposit')"><div class="qc-q">💸 錢在哪個帳戶？</div><div class="qc-a">入金→現貨帳戶，做合約→轉到永續帳戶</div></div>
+      <div class="qc" onclick="go('mlp')"><div class="qc-q">🔒 MLP何時能提款？</div><div class="qc-a">鎖定期4天後才能提出</div></div>
+      <div class="qc" onclick="go('fees')"><div class="qc-q">💵 手續費多少？</div><div class="qc-a">現貨0.05%，合約約0.030%</div></div>
+      <div class="qc" onclick="go('perps')"><div class="qc-q">📉 止損沒有觸發？</div><div class="qc-a">觸發基於Mark Price非Last Price</div></div>
+      <div class="qc" onclick="go('swap')"><div class="qc-q">🔄 閃兌用哪個帳戶？</div><div class="qc-a">只能用現貨帳戶</div></div>
+      <div class="qc" onclick="go('about')"><div class="qc-q">🌐 哪些國家受限？</div><div class="qc-a">加拿大、美國、土耳其等10個國家</div></div>
+      <div class="qc" onclick="go('earn')"><div class="qc-q">💎 Earn和金庫差別？</div><div class="qc-a">Earn無鎖定期本金安全，金庫4天鎖定有風險</div></div>
+      <div class="qc" onclick="go('trouble')"><div class="qc-q">🖥️ 頁面打不開？</div><div class="qc-a">清緩存、換瀏覽器、檢查VPN</div></div>
+      <div class="qc" style="border-color:var(--red)"><div class="qc-q" style="color:var(--red)">🚨 有人要助記詞？</div><div class="qc-a">絕對詐騙！正規客服絕不索取</div></div>
+    </div>
+    <div style="font-size:12px;font-weight:800;color:#fff;margin-bottom:8px">📧 客服聯絡</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:11px;color:var(--muted);line-height:2">
+      一般客服：<a href="mailto:cs@mcmarkets.com" style="color:#60a5fa">cs@mcmarkets.com</a>（緊急4小時，一般24小時）<br>
+      技術支援：<a href="mailto:tech@mcmarkets.com" style="color:#60a5fa">tech@mcmarkets.com</a><br>
+      商務合作：<a href="mailto:business@mcmarkets.com" style="color:#60a5fa">business@mcmarkets.com</a><br>
+      Telegram官方群：<a href="https://t.me/mcmarketsglobal" style="color:#60a5fa" target="_blank">t.me/mcmarketsglobal</a>（24/7即時支援）
+    </div>
+  </div>
+
+  <!-- SCENARIOS -->
+  <div id="pg-scenarios" class="hidden">
+    <div class="pg-title">🎧 客服情境處理SOP</div>
+    <div class="sc-card"><div class="sc-q">💰 情境1：客戶說「我入金了，但沒看到錢」</div><div class="sc-steps">
+      <div class="sc-step"><div class="sn">1</div>請客戶提供TXID（區塊鏈交易編號）</div>
+      <div class="sc-step"><div class="sn">2</div>確認客戶選擇的網路與平台接收網路是否一致</div>
+      <div class="sc-step"><div class="sn">3</div>確認區塊鏈是否已完成確認（通常1~5分鐘）</div>
+      <div class="sc-step"><div class="sn">4</div>提醒：入金後錢在現貨帳戶，做合約要手動轉到永續帳戶</div>
+      <div class="sc-step"><div class="sn">5</div>若確認數已足夠仍未到帳超過1小時，請客戶發信至 cs@mcmarkets.com 並附上TxHash、幣種、金額、網路、時間</div>
+    </div></div>
+    <div class="sc-card"><div class="sc-q">💥 情境2：客戶說「我被爆倉了，要求賠償」</div><div class="sc-steps">
+      <div class="sc-step"><div class="sn">1</div>說明：保證金比率低於30%時系統自動觸發強制平倉</div>
+      <div class="sc-step"><div class="sn">2</div>說明：以Mark Price計算，防止操控，屬正常機制</div>
+      <div class="sc-step"><div class="sn">3</div>說明：爆倉損失無法追回，這是平台規則</div>
+      <div class="sc-step"><div class="sn">4</div>建議：未來使用止損單預防，並降低槓桿倍數</div>
+    </div></div>
+    <div class="sc-card"><div class="sc-q">📋 情境3：客戶問「我需要做KYC嗎？」</div><div class="sc-steps">
+      <div class="sc-step"><div class="sn">1</div>確認客戶想做什麼交易</div>
+      <div class="sc-step"><div class="sn">2</div>加密幣現貨/永續合約 → 不需要KYC</div>
+      <div class="sc-step"><div class="sn">3</div>黃金/外匯/美股/石油/指數（RWA）→ 至少需要L0驗證</div>
+      <div class="sc-step"><div class="sn">4</div>引導：個人設置 → 身份認證，填寫姓名、國籍、證件號碼等</div>
+    </div></div>
+    <div class="sc-card"><div class="sc-q">🔄 情境4：客戶說「想做合約但不知道怎麼把錢轉過去」</div><div class="sc-steps">
+      <div class="sc-step"><div class="sn">1</div>說明：入金後錢會先到現貨帳戶（Spot Account）</div>
+      <div class="sc-step"><div class="sn">2</div>引導：點擊交易頁面右側黃色「現貨↔合約」按鈕</div>
+      <div class="sc-step"><div class="sn">3</div>說明：帳戶間轉帳即時且免費，合約帳戶只接受USDC</div>
+    </div></div>
+    <div class="sc-card"><div class="sc-q">📈 情境5：客戶問「我的PnL為什麼一直在變？」</div><div class="sc-steps">
+      <div class="sc-step"><div class="sn">1</div>說明：這是未實現PnL（Unrealized PnL），倉位還開著</div>
+      <div class="sc-step"><div class="sn">2</div>說明：數字隨Mark Price即時變動，是正常現象</div>
+      <div class="sc-step"><div class="sn">3</div>說明：平倉後才會變成已實現PnL，確定入帳</div>
+    </div></div>
+    <div class="sc-card"><div class="sc-q">🔒 情境6：客戶問「MLP的錢什麼時候可以拿出來？」</div><div class="sc-steps">
+      <div class="sc-step"><div class="sn">1</div>說明：MLP有4天鎖定期</div>
+      <div class="sc-step"><div class="sn">2</div>注意：若在鎖定期內再存入，整筆重新計算4天</div>
+      <div class="sc-step"><div class="sn">3</div>提醒：MLP收益不保證，本金也可能虧損，不予賠償</div>
+    </div></div>
+    <div class="sc-card"><div class="sc-q">⚠️ 情境7：客戶說「止損/止盈沒有觸發」</div><div class="sc-steps">
+      <div class="sc-step"><div class="sn">1</div>說明：觸發基於Mark Price，非最新成交價Last Price</div>
+      <div class="sc-step"><div class="sn">2</div>說明：Mark Price是多源加權公允價格，可能與Last Price有差異</div>
+      <div class="sc-step"><div class="sn">3</div>若確認Mark Price也到了仍未觸發，請客戶提供訂單ID發至 cs@mcmarkets.com</div>
+    </div></div>
+    <div class="sc-card"><div class="sc-q">💸 情境8：客戶問「為什麼成交價跟我預期不一樣？」</div><div class="sc-steps">
+      <div class="sc-step"><div class="sn">1</div>說明：實際成交價 = Mark Price ± 衝擊成本（Impact Cost）</div>
+      <div class="sc-step"><div class="sn">2</div>說明：訂單越大，衝擊成本越高</div>
+      <div class="sc-step"><div class="sn">3</div>說明：下單前系統會顯示預估影響成本，請客戶下單前確認</div>
+    </div></div>
+    <div class="sc-card"><div class="sc-q">💎 情境9：客戶問「Earn和MLP金庫有什麼不同？」</div><div class="sc-steps">
+      <div class="sc-step"><div class="sn">1</div>Earn（賺取）：活期理財，支持BTC/ETH/SOL/USDC/USDT，無鎖定期，本金安全，風險低</div>
+      <div class="sc-step"><div class="sn">2</div>金庫（Vault）：為平台提供流動性，只支持USDC，鎖定期4天，本金有風險</div>
+      <div class="sc-step"><div class="sn">3</div>建議：根據客戶風險承受能力選擇，保守型建議Earn</div>
+    </div></div>
+    <div class="sc-card"><div class="sc-q">🖥️ 情境10：客戶說「平台頁面打不開」</div><div class="sc-steps">
+      <div class="sc-step"><div class="sn">1</div>引導刷新頁面（Ctrl+R 或 Cmd+R）</div>
+      <div class="sc-step"><div class="sn">2</div>清除瀏覽器緩存和Cookie</div>
+      <div class="sc-step"><div class="sn">3</div>換瀏覽器試試，推薦Chrome最新版</div>
+      <div class="sc-step"><div class="sn">4</div>如使用VPN，嘗試切換節點或暫時關閉</div>
+      <div class="sc-step"><div class="sn">5</div>仍無法解決，請客戶發信至 cs@mcmarkets.com 附上UID、瀏覽器版本、截圖</div>
+    </div></div>
+    <div class="sc-card"><div class="sc-q">🔗 情境11：客戶說「錢包連接不上」</div><div class="sc-steps">
+      <div class="sc-step"><div class="sn">1</div>確認錢包已解鎖，並切換到 Arbitrum One 網路</div>
+      <div class="sc-step"><div class="sn">2</div>檢查瀏覽器是否屏蔽了錢包彈窗</div>
+      <div class="sc-step"><div class="sn">3</div>在錢包設置中斷開MC Markets站點，重新連接</div>
+      <div class="sc-step"><div class="sn">4</div>確認錢包插件已更新到最新版本</div>
+      <div class="sc-step"><div class="sn">5</div>仍無法解決，發信至 cs@mcmarkets.com 附上UID、錢包名稱版本、瀏覽器信息、截圖</div>
+    </div></div>
+    <div class="sc-card" style="border-color:var(--red)"><div class="sc-q" style="color:var(--red)">🚨 情境12：客戶說「有人自稱客服要我提供助記詞/私鑰」</div><div class="sc-steps">
+      <div class="sc-step"><div class="sn">1</div>立即告知：這是詐騙！MC Markets客服絕不會索取助記詞/私鑰/密碼/驗證碼</div>
+      <div class="sc-step"><div class="sn">2</div>提醒：助記詞洩露=帳戶資產全部被盜，無法追回</div>
+      <div class="sc-step"><div class="sn">3</div>建議：立即更換錢包，將資產轉移到新錢包</div>
+      <div class="sc-step"><div class="sn">4</div>提醒：官方客服只通過 cs@mcmarkets.com 和 Telegram官方群提供服務</div>
+      <div class="sc-step"><div class="sn">5</div>建議客戶開啟2FA雙重驗證保護帳戶</div>
+    </div></div>
+  </div>
+
+  <!-- TICKET -->
+  <div id="pg-ticket" class="hidden">
+    <div class="pg-title">📧 工單模板</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;background:var(--bg2);padding:10px;border-radius:8px;border:1px solid var(--border)">
+      📌 提交工單時，<strong style="color:#fff">信息越完整，處理越快！</strong>緊急問題（資金安全）4小時內回覆，一般問題24小時內回覆。
+    </div>
+    <div id="ticket-content"></div>
+  </div>
+
+  <!-- TROUBLE -->
+  <div id="pg-trouble" class="hidden">
+    <div class="pg-title">🔧 問題排查指南</div>
+    <div id="trouble-content"></div>
+  </div>
+
+  <!-- CONTACT -->
+  <div id="pg-contact" class="hidden">
+    <div class="pg-title">📞 聯絡方式與官方渠道</div>
+    <div class="contact-grid">
+      <div class="contact-card"><h3>📧 一般客服</h3><p><a href="mailto:cs@mcmarkets.com">cs@mcmarkets.com</a><br>緊急問題：4小時內回覆<br>一般問題：24小時內回覆</p></div>
+      <div class="contact-card"><h3>⚙️ 技術支援</h3><p><a href="mailto:tech@mcmarkets.com">tech@mcmarkets.com</a><br>頁面Bug、功能異常等技術問題</p></div>
+      <div class="contact-card"><h3>🤝 商務合作</h3><p><a href="mailto:business@mcmarkets.com">business@mcmarkets.com</a><br>合作、機構需求等商務事宜</p></div>
+      <div class="contact-card"><h3>📰 媒體問詢</h3><p><a href="mailto:press@mcmarkets.com">press@mcmarkets.com</a><br>媒體採訪、新聞稿等</p></div>
+      <div class="contact-card"><h3>💬 Telegram官方群</h3><p><a href="https://t.me/mcmarketsglobal" target="_blank">t.me/mcmarketsglobal</a><br>24/7即時支援</p></div>
+      <div class="contact-card"><h3>🐦 Twitter/X</h3><p><a href="https://twitter.com/mcmarketsglobal" target="_blank">@mcmarketsglobal</a><br>最新公告和活動</p></div>
+      <div class="contact-card"><h3>💬 Discord</h3><p><a href="https://discord.gg/RPuKZt7q" target="_blank">discord.gg/RPuKZt7q</a><br>社區討論</p></div>
+      <div class="contact-card"><h3>📖 文檔中心</h3><p><a href="https://mc-markets.gitbook.io/mcmarkets-infohub" target="_blank">mc-markets.gitbook.io</a><br>官方InfoHub知識庫</p></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--red);border-radius:10px;padding:14px;">
+      <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:6px">🚨 防詐提醒</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.8">
+        MC Markets官方客服<strong style="color:#fff">絕不會</strong>通過私信聯繫您處理資金操作。<br>
+        請不要相信任何私信中的「加速提現」「代操盤」「保本承諾」等說法。<br>
+        官方服務只通過上方列出的正式渠道提供。
+      </div>
+    </div>
+  </div>
+
+  <!-- KNOWLEDGE PAGES -->
+  <div id="pg-knowledge" class="hidden">
+    <div class="pg-title" id="pg-ktitle"></div>
+    <div id="pg-kbody"></div>
+  </div>
+</div>
+</div>
+
+<!-- 手機底部導航 -->
+<div class="mobile-nav">
+  <button onclick="goBack()"><span>◀</span>上一頁</button>
+  <button onclick="go('home')"><span>🏠</span>首頁</button>
+  <button onclick="go('scenarios')"><span>🎧</span>客服SOP</button>
+  <button onclick="document.getElementById('si').focus()"><span>🔍</span>搜尋</button>
+</div>
+
+<script>
+const KB = {
+  about: { title:"🌐 關於平台", items:[
+    {q:"MC Markets是什麼平台",tags:["平台介紹","What is MC Markets","多資產"],a:"MC Markets是鏈上可驗證的多資產交易平台，支持加密貨幣、外匯、貴金屬、指數、能源、美股等多類資產的現貨與永續合約交易。平台配備鏈上儲備證明、閃兌、金庫等核心功能。"},
+    {q:"MC Markets有什麼優勢",tags:["優勢","Why choose","為什麼用"],a:"1）鏈上可驗證的資金安全——儲備證明部署在Arbitrum；2）多資產一站式——外匯、黃金、指數、加密貨幣一個帳號全覆蓋；3）Web3原生——錢包連接即交易；4）專業級引擎毫秒級執行；5）積分激勵與社區共建。"},
+    {q:"MC Markets受什麼監管",tags:["監管","牌照","FSA","regulated","合法"],a:"MC Markets受金融服務管理局（FSA）監管，遵守KYC和AML標準。公司成立於2023年，總部位於Seychelles。"},
+    {q:"哪些國家和地區不能使用",tags:["限制地區","restricted","美國","中國"],a:"以下國家/地區的居民不可使用MC Markets：加拿大、古巴、伊朗、伊拉克、緬甸、朝鮮、蘇丹、敘利亞、土耳其、美國。"},
+    {q:"MC Markets支持法幣入金嗎",tags:["法幣","信用卡","銀行","fiat"],a:"目前暫不支持直接法幣入金。您可以先在其他平台購買加密貨幣後轉入MC Markets。正在探索更多入金渠道，請關注官方公告。"},
+    {q:"MC Markets有移動APP嗎",tags:["APP","手機","iOS","Android"],a:"目前所有交易功能通過網頁端提供。移動應用正在開發中，預計下半年推出。請關注官方Telegram和Twitter獲取最新進度。"},
+    {q:"MC Markets是CEX還是DEX",tags:["中心化","去中心化","CEX","DEX"],a:"MC Markets結合了兩者優勢：交易撮合使用高性能中心化引擎確保速度；資金安全使用鏈上儲備證明（部署在Arbitrum）確保透明。可以理解為Web2的體驗加上Web3的透明機制。"},
+    {q:"MC Markets部署在什麼鏈上",tags:["區塊鏈","Arbitrum","鏈"],a:"MC Markets的核心代幣部署在Arbitrum鏈上，低費用、高吞吐量。未來將支持以太坊、BNB Chain和TRON等多個EVM兼容鏈。"},
+    {q:"MCM代幣什麼時候上線",tags:["MCM","代幣","TGE","空投"],a:"MCM和MLP代幣的詳細信息將在後續正式公告中發布。目前已知未來計劃包括代幣質押、治理投票和交易費用折扣等功能。積分未來可兌換項目token。"},
+    {q:"有沒有模擬交易",tags:["模擬","demo","testnet","練習"],a:"目前暫未提供模擬交易功能。如果您是新手，建議先從小額交易開始熟悉平台操作，並設置好止損來控制風險。"},
+    {q:"有沒有API交易",tags:["API","程序化","自動交易","bot"],a:"API交易功能目前正在規劃中。如果您有具體的API需求，歡迎將詳細需求發送至 cs@mcmarkets.com，我們會記錄並評估。"},
+  ]},
+  register: { title:"👤 註冊與安全", items:[
+    {q:"MC Markets支持哪些注冊方式",tags:["注冊","登入","Google","Email","錢包"],a:"三種方式：①Email注冊 ②Google帳號一鍵登入 ③Web3錢包連接（如MetaMask），錢包地址即身份。點擊右上角黃色「登入」按鈕開始。"},
+    {q:"什麼是2FA怎麼開啟",tags:["2FA","雙重驗證","Google Authenticator"],a:"2FA是雙重身份驗證，能有效防止未授權訪問。進入安全設置→谷歌驗證器，掃描QR碼進行綁定。之後敏感操作時系統要求輸入6位驗證碼。強烈建議開啟。"},
+    {q:"2FA驗證碼不對怎麼辦",tags:["2FA錯誤","驗證碼不對","Authenticator"],a:"排查步驟：1）檢查手機時間是否自動同步（Google Authenticator依賴設備時間）；2）確認選的是MC Markets對應的驗證碼；3）驗證碼有30秒有效期，等下一個再輸入。如果Authenticator被刪除或手機丟失，請發信至 cs@mcmarkets.com 申請重置2FA。"},
+    {q:"帳戶結構是怎樣的",tags:["帳戶","現貨帳戶","永續帳戶","金庫帳戶"],a:"MC Markets帳戶包含三個獨立帳戶：①合約帳戶（永續合約交易，USDC結算）②現貨帳戶（現貨交易和閃兌）③金庫帳戶（MLP金庫存款）。三個帳戶在Portfolio頁面統一展示，帳戶間轉帳即時且免費。"},
+    {q:"KYC認證有幾個等級",tags:["KYC","認證","驗證","實名"],a:"三個等級：L0基礎認證（填寫基本信息）；L1證件認證（上傳身份證、護照或駕照）；L2人臉認證（完成人臉識別）。加密貨幣交易（合約和現貨）無需KYC。RWA類標的（外匯、黃金、指數等）需完成L0。"},
+    {q:"KYC基礎認證需要填什麼信息",tags:["KYC L0","基礎認證","需要什麼資料"],a:"L0需填：姓名、居住國家/地區（系統會根據IP自動預設）、國籍、證件類型、證件號碼、證件過期時間。提交後等待審核，認證結果會通過站內信通知。"},
+    {q:"MetaMask錢包在哪下載",tags:["MetaMask","錢包下載","Web3錢包"],a:"可在Chrome應用商店安裝：https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn 請只從官方渠道下載，避免釣魚網站。"},
+    {q:"連接錢包時遇到問題怎麼辦",tags:["錢包連不上","連接失敗","錢包報錯"],a:"排查步驟：1）確認錢包已解鎖並切換到Arbitrum One網路；2）檢查瀏覽器是否屏蔽了錢包彈窗；3）在錢包設置中斷開MC Markets站點，重新連接；4）確認錢包插件已更新到最新版本。如仍無法連接，請發信至 cs@mcmarkets.com 附上錢包名稱版本和截圖。"},
+    {q:"怎麼修改注冊郵箱",tags:["換郵箱","修改郵箱"],a:"進入安全設置→郵箱驗證，先驗證當前郵箱OTP，再輸入新郵箱並驗證，點確認完成。注意：換郵箱後24小時內，提現、提幣地址管理、閃兌暫時停用。"},
+    {q:"怎麼設置資金密碼",tags:["資金密碼","提現密碼"],a:"進入用戶中心→安全設置→資金密碼，收郵箱OTP驗證，設置新密碼後確認完成。"},
+  ]},
+  deposit: { title:"💰 入金與出金", items:[
+    {q:"支持哪些幣種充值",tags:["入金幣種","可以充什麼幣"],a:"MC Markets支持BTC、ETH、SOL、USDT和USDC進行充值。"},
+    {q:"充值支持哪些網路",tags:["充值網路","網路選擇","TRC20","Arbitrum"],a:"USDC支持：Arbitrum、Coinbase、BEP20、ERC20、Solana；USDT支持：Arbitrum、BEP20、ERC20、Solana、TRC20；BTC只支持Bitcoin主網；ETH支持：Arbitrum、Coinbase、ERC20；SOL只支持Solana。充值前請確認所選網路與發送端一致！"},
+    {q:"最低充值金額是多少",tags:["最低入金","入金門檻"],a:"USDC最低充值1 USDC，BTC、ETH、SOL最低充值10 USDC等值。具體以充值頁面為準。"},
+    {q:"充值到帳需要多久",tags:["入金多久到","為什麼沒到帳"],a:"平台內部轉帳即時到帳。外部錢包轉帳需要等待區塊鏈確認，通常1~5分鐘。充值成功後可在Overview頁面查看餘額。"},
+    {q:"充值有手續費嗎",tags:["入金手續費","deposit fee","Gas Fee"],a:"MC Markets不收取充值手續費，但區塊鏈網路產生的礦工費（Gas Fee）需要您自己承擔。"},
+    {q:"充值入帳到哪個帳戶",tags:["入金到哪","錢去哪了"],a:"充值資金入帳至您的現貨帳戶（Spot Account）。如需用於合約交易，可以將資金從現貨帳戶劃轉至合約帳戶。"},
+    {q:"合約帳戶能直接提現嗎",tags:["合約帳戶提現","為什麼提不了"],a:"不能直接提現。只有現貨帳戶中的資金可用於提現。合約帳戶的資金需要先劃轉到現貨帳戶。劃轉即時完成免費。"},
+    {q:"提現需要多久",tags:["提現多久到","提現審核"],a:"快速提現通常2小時內完成，大額提現最多24小時審核。審核通過後到帳時間取決於區塊鏈網路狀況。超過24小時仍未到帳，請發信至 cs@mcmarkets.com 附上提現訂單ID和截圖。"},
+    {q:"轉錯地址能找回資金嗎",tags:["轉錯地址","資金找回","wrong address"],a:"很遺憾，區塊鏈交易具有不可逆性。如果資金轉入錯誤地址，我們無法從技術層面進行逆轉或找回。請在每次轉帳前務必仔細核對目標地址，建議先用小額測試轉帳。"},
+    {q:"充錯網路了怎麼辦",tags:["充錯鏈","轉錯網路","wrong network"],a:"請盡快發信至 cs@mcmarkets.com 附上TxHash、使用的網路和正確應使用的網路、充值金額和幣種、您的帳戶信息。我們的技術團隊會評估是否有可能協助找回，但無法保證。"},
+    {q:"怎麼添加提幣地址白名單",tags:["白名單","提現地址","whitelist"],a:"進入用戶中心→提幣地址管理，點添加提幣地址，填寫提現幣種、網路、錢包地址和有效期，點添加完成。注意：白名單地址有有效期，請定期更新。"},
+  ]},
+  perps: { title:"📊 合約交易（永續合約）", items:[
+    {q:"MC Markets支持哪些合約交易品種",tags:["合約品種","可以交易什麼"],a:"加密貨幣（BTCUSD、ETHUSD、SOLUSD）；外匯（EURUSD、GBPUSD、USDJPY、USDCHF、USDCAD、AUDUSD、NZDUSD）；貴金屬（XAUUSD黃金、XAGUSD白銀）；指數（NAS100、US30、US500）；能源（USOIL原油）；美股（AAPL、AMZN、TSLA、META、MSFT、NVDA、GOOGL、MSTR）。"},
+    {q:"怎麼開倉交易",tags:["怎麼下單","怎麼買","開倉步驟"],a:"①選交易品種；②選做多或做空；③設置槓桿倍數；④選市價單或限價單；⑤輸入下單數量；⑥可選設置止盈/止損；⑦確認預估成交價和影響成本後點擊提交。首次合約交易需先把現貨帳戶的USDC劃轉到合約帳戶。"},
+    {q:"什麼是市價單",tags:["市價單","market order"],a:"市價單會以當前市場上最佳的報價立即成交。優先考慮速度，適合需要快速進場或離場的情境。成交價格已包含影響成本（衝擊成本）。"},
+    {q:"什麼是限價單",tags:["限價單","limit order","掛單"],a:"限價單是指定價格執行交易的訂單類型。訂單只在標記價觸及您設定的價格時才會觸發。如果市場跳空跳過了掛單價格，限價訂單將在跳空後的真實穿透價格成交。"},
+    {q:"什麼是止損止盈",tags:["止損","止盈","SL","TP"],a:"止損防止超出預期的虧損，止盈幫助鎖定盈利。您可以預設一個價格水平，當標記價Mark Price達到該水平時，倉位自動平倉。所有觸發訂單都以Mark Price為準。"},
+    {q:"為什麼止損止盈沒有觸發",tags:["止損沒觸發","SL not triggered","止盈沒有"],a:"MC Markets的止損/止盈觸發基於標記價（Mark Price），而非最新成交價（Last Price）。標記價是多源加權平滑生成的公允價格，可能和Last Price有差異。如果確認Mark Price也到了但仍未觸發，請把訂單ID發到 cs@mcmarkets.com。"},
+    {q:"為什麼成交價格和預期不一樣",tags:["滑點","成交價偏差","slippage","影響成本"],a:"成交價格由報價（Quote）決定，該價格已包含根據訂單大小動態計算的影響成本（Impact Cost）。訂單越大，影響成本越高。系統會在下單前展示預估影響成本。"},
+    {q:"合約保證金用什麼幣種",tags:["保證金幣種","合約用什麼充","USDC"],a:"合約保證金僅支持USDC。您可以先充值支持的幣種到現貨帳戶，然後通過閃兌功能將其轉換為USDC，再劃轉到合約帳戶使用。"},
+    {q:"訂單被拒絕了怎麼辦",tags:["訂單拒絕","下單失敗","order rejected"],a:"常見原因：①餘額不足——合約交易需要合約帳戶有USDC；②下單數量不滿足最小要求；③限價偏離最優價過大（做多時限價不能低於當前最優賣價，做空時不能高於當前最優買價）。請檢查餘額和訂單參數後重試，如仍有問題，請聯繫 cs@mcmarkets.com 附上訂單ID。"},
+    {q:"滑點控制是什麼",tags:["滑點設置","slippage control","最大滑點"],a:"用戶可在交易面板自行調整最大滑點容忍度。系統默認：常規平倉操作使用8%最大滑點；止盈/止損訂單使用10%最大滑點，確保止損單在極端行情下能被執行。"},
+    {q:"BTC合約的參數是什麼",tags:["BTC合約","BTCUSD"],a:"BTCUSD合約：合約大小1，最小跳動$1.0，數量精度0.0001，最小下單名義$10，最小數量0.0001。"},
+    {q:"黃金合約的參數是什麼",tags:["黃金合約","XAUUSD"],a:"XAUUSD合約：合約大小1盎司，最小跳動$0.01，數量精度0.01 oz，最小下單名義$100，最小數量0.01。"},
+    {q:"怎麼平倉",tags:["怎麼平倉","close position"],a:"兩種方式：①在倉位列表點擊「平倉」按鈕立即以當前價格平倉；②提前設好止損/止盈訂單，系統會在標記價達到指定水平時自動平倉。"},
+  ]},
+  spot: { title:"🛒 現貨交易", items:[
+    {q:"什麼是現貨交易",tags:["現貨","spot trading","買幣"],a:"在MC Markets中，現貨交易就是用帳戶中的USDC直接購買數字資產（如BTC、ETH、SOL等），或者賣出這些資產換回USDC。真實擁有資產，不會爆倉，風險最低，新手首選。"},
+    {q:"現貨交易支持哪些交易對",tags:["現貨交易對","支持哪些幣"],a:"支持：BTC/USDC、ETH/USDC、SOL/USDC、HYPE/USDC、XPL/USDC、PUMP/USDC、FARTCOIN/USDC、MON/USDC、PURR/USDC、ENA/USDC、USDT/USDC等，所有交易對均以USDC計價。"},
+    {q:"現貨交易有手續費嗎",tags:["現貨手續費","spot fee"],a:"MC Markets的所有現貨交易對的手續費都是0.05%。"},
+    {q:"現貨和合約有什麼區別",tags:["現貨vs合約","spot vs perps"],a:"現貨：直接買幣、真實擁有、不會爆倉、無槓桿、風險低。合約：不真實擁有資產、可用槓桿放大、會爆倉、風險高。新手建議從現貨開始。"},
+  ]},
+  swap: { title:"🔄 閃兌 Swap", items:[
+    {q:"什麼是閃兌功能",tags:["閃兌","swap","換幣"],a:"閃兌是MC Markets提供的即時資產轉換功能，在帳戶內即時完成，無需等待市場撮合或區塊鏈確認。適合快速調整資產配置。"},
+    {q:"閃兌支持哪些幣種",tags:["閃兌幣種","swap currencies"],a:"MC Markets目前支持BTC、ETH、SOL、USDT和USDC之間的閃兌。"},
+    {q:"閃兌需要什麼條件",tags:["閃兌條件","為什麼閃兌不了"],a:"使用閃兌需確保：①要兌換的資產在您的現貨帳戶中（合約帳戶的資金需先劃轉到現貨帳戶）；②該資產處於可用狀態，沒有被未成交掛單或進行中的提現操作佔用。"},
+    {q:"閃兌和現貨交易有什麼區別",tags:["閃兌vs現貨"],a:"閃兌通過平台內部定價引擎即時完成轉換，無需訂單簿撮合，即時成交，適合快速換幣。現貨交易則需要在市場中撮合，支持限價單精確控制價格。"},
+    {q:"閃兌定價機制",tags:["閃兌匯率","swap price"],a:"閃兌參考市場實時價格，由內部定價引擎驅動，每10秒刷新匯率。主流資產價差極小，流動性較低的資產價差可能稍大。"},
+  ]},
+  earn: { title:"💎 賺取 Earn", items:[
+    {q:"什麼是賺取Earn",tags:["Earn","賺取","活期理財"],a:"賺取是MC Markets推出的活期理財功能。您可以將現貨帳戶中的閒置資產存入理財資金池，按平台動態配置的年化收益率賺取每日利息。支持BTC、ETH、SOL、USDC、USDT五種資產。無鎖定期，隨存隨取，本金不受影響。"},
+    {q:"Earn和MLP金庫有什麼區別",tags:["Earn vs Vault","賺取vs金庫"],a:"Earn：活期理財，支持5種資產，無鎖定期，本金不受影響，風險低。金庫（Vault）：為平台提供流動性，僅支持USDC，鎖定期4天，收益可能更高但本金存在風險。請根據自身風險承受能力選擇。"},
+    {q:"Earn的利息從哪裡來",tags:["Earn收益","利息來源"],a:"收益來源於平台獎勵用戶提供流動性所產生的利息。"},
+    {q:"Earn的利息用什麼幣種發放",tags:["Earn利息幣種","幣本位"],a:"利息以您存入的原幣種進行結算和發放。例如存入BTC，賺取的利息也是BTC。頁面上顯示的USDC價值僅作估值參考。"},
+    {q:"Earn什麼時候開始計算利息",tags:["Earn計息","T+1"],a:"資金成功存入後，將在次日UTC 00:00開始計算收益（T+1機制）。提取的部分將立即停止計息。"},
+    {q:"Earn有鎖定期嗎",tags:["Earn鎖定","可以隨時提取"],a:"沒有鎖定期。您可以隨時存入和提取，提取後資金即時轉入現貨帳戶。"},
+    {q:"Earn會虧損本金嗎",tags:["Earn本金安全","Earn風險"],a:"不會。賺取功能不會導致本金虧損。這是Earn與MLP金庫的重要區別。"},
+    {q:"Earn的收益率是多少",tags:["Earn APY","Earn收益率"],a:"年化收益率由平台動態調整，以賺取頁面實時顯示為準。提取邏輯：系統在處理提取時，會優先提取利息部分，超出利息的部分再從本金中扣除。"},
+  ]},
+  margin: { title:"🏛️ 保證金與槓桿", items:[
+    {q:"MC Markets用什麼保證金模式",tags:["保證金模式","全倉","Cross Margin"],a:"MC Markets默認使用全倉保證金模式（Cross Margin），即帳戶中所有可用資金都可作為倉位的保證金。這能最大化資金效率，幫助避免倉位被提前清算。"},
+    {q:"開倉需要多少保證金",tags:["初始保證金","保證金怎麼算"],a:"開倉所需保證金 = 倉位大小 × 標記價 ÷ 槓桿倍數。例如用50倍槓桿買入價值$10,000的BTC，需要$200的保證金。"},
+    {q:"BTC最大槓桿是多少",tags:["BTC槓桿","加密幣槓桿","max leverage"],a:"加密貨幣（BTC/ETH/SOL）採用浮動槓桿分層：名義金額0-50萬美元，最大50倍槓桿；50萬-100萬美元，最大25倍槓桿。倉位越大，可用最大槓桿越低。"},
+    {q:"黃金最大槓桿是多少",tags:["黃金槓桿","XAUUSD槓桿"],a:"貴金屬（XAU/XAG）採用浮動槓桿分層：名義金額0-200萬美元，最大200倍槓桿；200萬-300萬美元，最大100倍槓桿。"},
+    {q:"什麼時候會被清算",tags:["清算條件","爆倉線","30%"],a:"當您的保證金率低於30%時，系統會觸發強制平倉（清算）。清算完全基於標記價Mark Price，不是Last Price，這能防止異常價格導致的錯誤清算。"},
+    {q:"怎麼避免被清算",tags:["避免爆倉","防止強平"],a:"①隨時關注保證金率；②保證金率降低時及時追加保證金或手動減倉；③提前設好止損訂單；④不要用過高的槓桿倍數。系統在風險接近清算線時也會發出警報。"},
+  ]},
+  mlp: { title:"💧 MLP金庫", items:[
+    {q:"什麼是MLP金庫",tags:["MLP","金庫","Vault","被動收益"],a:"MLP金庫為平台提供流動性支撐。您存入USDC即成為流動性合伙人，支撐所有交易品種的瞬時執行。作為回報，您將分享交易手續費及策略產生的各項收益。"},
+    {q:"MLP金庫的收益從哪來",tags:["金庫收益","MLP returns","APY"],a:"MLP收益來源於交易手續費分配和策略對沖截取的資金費率。採用T+1每日結算，收益自動計入本金。年化收益率（APY）基於市場真實表現動態變化，不做固定承諾。"},
+    {q:"MLP金庫有鎖定期嗎",tags:["MLP鎖定期","金庫多久能取出"],a:"MLP金庫的鎖定期為4天。存入後4天內無法取出。注意：如果在解鎖前追加存款，鎖定期會以最後一筆存款時間重新計算4天。"},
+    {q:"MLP金庫最多能存多少",tags:["金庫上限","存款限額"],a:"MLP金庫單帳戶最大存款限額為10,000 USDC。但實際可存金額取決於您的積分等級：2,000積分=$2,500；10,000積分=$5,000；50,000積分=$7,500；100,000積分=$10,000。沒有積分額度為0，無法存入。"},
+    {q:"為什麼我的金庫存款額度是0",tags:["金庫額度0","為什麼存不了金庫"],a:"金庫存款額度為0有兩種可能：①積分不足2,000，還沒有解鎖存款資格——可以通過交易或邀請好友獲取積分；②存款額度已用完——可以獲取更多積分來提高額度上限。"},
+    {q:"MLP金庫會虧本金嗎",tags:["金庫風險","金庫保本嗎"],a:"MLP金庫使用承擔風險的主動交易策略，收益不保證。您可能會失去部分或全部存款，在損失的情況下沒有賠償。存款前請確認您理解並接受這些風險。"},
+    {q:"什麼是HSF對沖策略基金",tags:["HSF","對沖","風控基金"],a:"HSF（Hedge Strategy Fund）是一個獨立的策略基金，負責主動管理和對沖平台整體風險。HSF通過做市策略抵消庫存壓力，保障流動性池在極端市場波動下的安全性。HSF與MLP金庫協同運作——MLP提供流動性，HSF管理風險。"},
+    {q:"金庫和交易之間轉帳收費嗎",tags:["金庫轉帳","劃轉手續費"],a:"不收費。交易餘額與金庫之間的轉帳免費，即時完成。"},
+  ]},
+  fees: { title:"💸 費用", items:[
+    {q:"手續費怎麼收的",tags:["手續費","費用","fee structure"],a:"各品種手續費：現貨交易0.05%；加密貨幣合約默認0.030%（開倉0.015%+平倉0.015%）；黃金XAUUSD合約0.030%；白銀XAGUSD合約0.100%；外匯合約0.020%；指數合約0.050%；能源USOIL合約0.100%；美股合約0.100%。帳戶間劃轉免費。"},
+    {q:"加密貨幣合約費率等級有哪些",tags:["費率折扣","費率等級","fee tiers"],a:"加密貨幣合約費率分7個等級（根據過去14天加權交易量）：默認0.030%；>$5M為0.026%；>$25M為0.0215%；>$100M為0.017%；>$500M為0.014%；>$2B為0.013%；>$7B為0.012%。"},
+    {q:"資金費率是怎麼收的",tags:["資金費率","funding rate","每小時結算"],a:"資金費率每小時整點結算一次，系統每分鐘更新費率並在前端實時展示。當市場多空失衡時，偏重一方需要向另一方支付資金費率。您可以在交易界面查看當前費率，提前預估持倉成本。"},
+    {q:"內部轉帳有手續費嗎",tags:["劃轉手續費","帳戶間轉帳"],a:"沒有。現貨帳戶、合約帳戶與金庫帳戶之間的轉帳都是免費的，即時完成。"},
+  ]},
+  pnl: { title:"📈 損益計算", items:[
+    {q:"未實現盈虧怎麼算",tags:["未實現PnL","浮盈","unrealized PnL"],a:"未實現盈虧 =（當前Mark Price − 開倉均價）× 倉位大小。這個數值會隨標記價變動實時更新。做多時Mark Price高於開倉價就是盈利，做空反之。"},
+    {q:"已實現盈虧是什麼",tags:["已實現PnL","平倉後盈虧"],a:"已實現盈虧是您平倉後的最終淨盈虧。平倉時系統會將未實現盈虧轉為已實現盈虧，並扣除手續費和資金費率。"},
+    {q:"總帳戶價值怎麼算",tags:["帳戶總價值","total account value"],a:"總帳戶價值 = 存入資產的USD價值 + 未實現盈虧 + 已實現盈虧 + 資金費率收入 − 手續費。實時更新。"},
+    {q:"MC Markets用什麼價格計算盈虧",tags:["Mark Price","盈虧計算"],a:"MC Markets統一使用標記價Mark Price計算盈虧，而非最新成交價。這確保盈虧反映的是市場公允價值，不受單筆異常交易影響。"},
+  ]},
+  points: { title:"⭐ 積分系統", items:[
+    {q:"積分是怎麼算的",tags:["積分規則","積分計算","how points work"],a:"積分按每日計算，由交易積分和推薦積分兩部分組成。各項積分通過權重進行相對調整。"},
+    {q:"什麼是交易積分",tags:["交易積分","trading points"],a:"交易積分 = 交易手續費 × 100（以USDC計價）。名義交易量以開倉訂單成交當刻為準。"},
+    {q:"推薦積分怎麼算",tags:["推薦積分","邀請獎勵","referral points"],a:"推薦人可獲得被推薦用戶積分的10%。積分按日計算，僅適用於直接推薦關係。如果推薦了多名用戶，推薦積分基於所有被推薦用戶積分總和的10%。"},
+    {q:"積分排行榜怎麼運作",tags:["排行榜","leaderboard","排名"],a:"積分排行榜每小時更新一次，展示前100名用戶。排行榜採用賽季（期數）機制，空投分配比例與排名等級直接關聯。系統配備實時反作弊監測。"},
+    {q:"積分有什麼用",tags:["積分用途","積分換什麼","airdrop"],a:"積分是衡量用戶對協議貢獻的核心指標，空投分配比例與排名等級直接關聯。積分未來可通過智能合約轉換為代幣。具體MCM代幣細節將在後續正式公告中發布。"},
+    {q:"怎麼邀請好友",tags:["邀請好友","推薦碼","referral code"],a:"在平台「積分」頁面找到專屬邀請碼和邀請鏈接。分享給朋友，朋友注冊後在積分頁面「已綁定」處填入邀請碼即可完成綁定。綁定成功後自動獲得朋友每日積分的10%。"},
+    {q:"為什麼積分增速變慢了",tags:["積分衰減","積分增長慢"],a:"MC Markets引入了動態衰減機制（生態平滑機制），當單日積分產出達到一定閾值後，新增部分的獲取效率會平滑放緩。這是為了保護中小交易者的利益，確保激勵長期可持續。"},
+  ]},
+  security: { title:"🔒 安全與合規", items:[
+    {q:"MC Markets怎麼保障資金安全",tags:["資金安全","PoR","儲備金"],a:"儲備證明基於默克爾樹技術部署在Arbitrum鏈上，用戶可在平台頂部導航欄的「儲備金證明」頁面查詢，確認資金是否得到1:1充分儲備。用戶資產與平台運營資金存儲在獨立的鏈上地址中。"},
+    {q:"儲備金證明在哪裡看",tags:["儲備金證明","PoR在哪","proof of reserves"],a:"平台頂部導航「儲備金證明」，點擊即可查看儲備數據，登錄後即可訪問。頁面展示「總儲備金」和「用戶資產」兩組數據，兩者比例始終≥100%。"},
+    {q:"哪些交易行為是被禁止的",tags:["違規行為","禁止行為","封號"],a:"禁止的行為包括：刷單交易、虛假掛單、內幕交易等市場操縱行為；操作重複或鏡像帳戶套利；利用技術漏洞或延遲套利；洗錢等非法活動；規避交易限額或風險控制。違規可能導致資金凍結或帳戶終止。"},
+    {q:"MC Markets的合規情況",tags:["合規","KYC","AML","監管"],a:"MC Markets受金融服務管理局（FSA）監管，遵守適用的監管法規，包括KYC和AML標準。公司成立於2023年，總部位於Seychelles。"},
+    {q:"交易風險提示",tags:["交易風險","風險提示","risk warning"],a:"數字資產及衍生品交易具有高度風險，價格波動可能導致重大損失。永續合約採用保證金及槓桿機制，可能在短時間內產生快速虧損。請在交易前充分了解相關規則及風險。MC Markets不提供投資建議。"},
+  ]},
+  glossary: { title:"📚 術語表", items:[
+    {q:"Mark Price 標記價",tags:["Mark Price","標記價"],a:"平台的公允價格基準，由多源外部預言機價格和內部數據加權聚合生成。用於盈虧計算、清算和風險控制，旨在防止單筆異常價格操縱。所有觸發訂單和清算都以標記價為準。"},
+    {q:"Oracle Price 預言機價格",tags:["Oracle","預言機","Chainlink","Pyth"],a:"外部數據提供者，為平台提供獨立的、經過驗證的現貨參考價格。MC Markets使用Chainlink和Pyth等可信預言機的數據，與內部數據交叉驗證，確保價格準確且抗操縱。"},
+    {q:"Liquidation 清算/爆倉",tags:["清算","爆倉","Liquidation"],a:"當您的保證金率低於30%時，系統會自動平掉您的倉位以避免進一步損失，這就是清算（也叫爆倉/強平）。MC Markets的清算基於標記價Mark Price，而非容易被操縱的單筆成交價。"},
+    {q:"TXID 交易哈希",tags:["TXID","TxHash","交易哈希"],a:"每筆區塊鏈交易的唯一識別碼，就像交易收據的編號。客戶入金沒到帳時，需要提供TXID供客服查詢。可在外部錢包的交易記錄中找到。"},
+    {q:"UID 用戶ID",tags:["UID","用戶ID","User ID"],a:"您在平台上的專屬帳號編號。聯繫客服時，客服需要您的UID才能找到您的帳號並協助處理問題。"},
+    {q:"RWA 真實世界資產",tags:["RWA","Real World Assets","真實世界資產"],a:"RWA = Real World Assets，真實世界資產，指現實中存在的金融商品，如黃金、白銀、外匯、美股、石油、指數等。這類商品受法規監管，在MC Markets交易需要至少完成L0 KYC驗證。"},
+    {q:"Impact Cost 影響成本",tags:["Impact Cost","影響成本","衝擊成本"],a:"反映了訂單規模對市場流動性的衝擊，訂單越大影響成本越高。實際成交價 = Mark Price ± 影響成本。系統在下單前展示預估數字。"},
+    {q:"Skew 淨偏倚",tags:["Skew","淨偏倚","多空失衡"],a:"衡量的是平台上多頭和空頭倉位的不平衡程度。當淨偏倚過高時，表示市場一邊倒，會影響資金費率——偏重的一方需要支付更多費用。"},
+    {q:"Tick 最小跳動",tags:["Tick","最小價格變動"],a:"是金融資產價格變動的最小單位。例如BTCUSD的最小跳動為$1.0，ETHUSD為$0.1，XAUUSD為$0.01。"},
+    {q:"平台名詞中英文對照",tags:["術語對照","英文界面","glossary"],a:"Perpetual（永續合約）/ Spot（現貨）/ Swap（閃兌）/ Vault（金庫）/ Portfolio（投資組合）/ Positions（倉位）/ Open Orders（當前委托）/ Take Profit（止盈）/ Stop Loss（止損）/ Liq Price（強平價格）/ Unreal. PnL（未實現盈虧）/ Margin Ratio（保證金比率）/ Funding History（資金費歷史）/ Available（可用餘額）/ Leverage（槓桿）/ Mark Price（標記價）"},
+  ]},
+};
+
+const TICKET_DATA = [
+  {q:"充值未到帳工單",tags:["充值工單","入金問題"],a:"發信至 cs@mcmarkets.com，主題：「[充值問題] XX幣種充值未到帳」\n正文包含：\n1）交易哈希 TxHash\n2）充值幣種和金額\n3）使用的網路\n4）發起時間\n5）區塊鏈瀏覽器截圖（顯示交易狀態）\n6）MC Markets餘額截圖"},
+  {q:"提現未到帳工單",tags:["提現工單","出金問題"],a:"發信至 cs@mcmarkets.com，主題：「[提現問題] XX幣種提現超時」\n正文包含：\n1）提現訂單ID\n2）幣種和金額\n3）目標錢包地址\n4）發起時間\n5）當前平台端狀態截圖"},
+  {q:"訂單異常或資金異常工單",tags:["訂單工單","資金異常"],a:"發信至 cs@mcmarkets.com，主題：「[交易問題] 訂單異常-簡要描述」\n正文包含：\n1）您的UID或注冊郵箱\n2）相關訂單ID\n3）問題發生的具體時間\n4）異常描述（期望情況 vs 實際情況）\n5）相關截圖（訂單詳情、餘額、清算記錄等）"},
+  {q:"帳戶被凍結或受限工單",tags:["帳戶凍結","帳戶受限"],a:"發信至 cs@mcmarkets.com，主題：「[帳戶問題] 帳戶受限」\n正文包含：\n1）您的注冊郵箱或錢包地址\n2）帳戶受限的具體表現（無法登錄/無法交易/無法提現等）\n3）相關截圖"},
+  {q:"疑似帳戶被盜工單",tags:["帳戶被盜","未授權訪問","緊急"],a:"立即修改密碼並開啟2FA！\n緊急發信至 cs@mcmarkets.com，主題：「[緊急-帳戶安全] 疑似帳戶被盜」\n正文包含：\n1）您的錢包地址或注冊郵箱\n2）發現異常的時間\n3）異常操作的截圖（如非本人交易記錄）\n緊急問題4小時內回覆！"},
+  {q:"平台界面Bug反饋",tags:["Bug反饋","頁面異常"],a:"發信至 cs@mcmarkets.com，主題：「[Bug反饋] 簡要描述」\n正文包含：\n1）您的UID\n2）遇到什麼問題\n3）問題出現時的截圖\n4）大概發生時間\n5）您使用的設備和瀏覽器（如：iPhone Safari / 電腦Chrome）"},
+  {q:"投訴工單",tags:["投訴","不滿意"],a:"發信至 cs@mcmarkets.com，主題請標注「投訴」\n正文包含：\n1）您的帳戶信息\n2）問題經過詳述\n3）相關截圖\n我們會優先處理並認真跟進。"},
+  {q:"提交工單需要的通用信息",tags:["工單格式","提交工單"],a:"所有工單建議包含的基本信息：\n1）注冊郵箱或UID\n2）問題發生的大致時間\n3）具體操作步驟和異常現象\n4）訂單ID或TxHash（如有）\n5）您已完成的排查步驟\n6）相關截圖或錄屏\n信息越完整，處理越快！"},
+];
+
+const TROUBLE_DATA = [
+  {q:"頁面打不開怎麼辦",tags:["頁面打不開","白屏","網站打不開"],a:"請按以下步驟逐一嘗試：\n1）刷新頁面（Ctrl+R 或 Cmd+R）\n2）清除瀏覽器緩存和Cookie（Chrome：設置→隱私和安全→清除瀏覽數據）\n3）更換瀏覽器，推薦Chrome最新版\n4）如果使用了VPN，嘗試切換節點或暫時關閉\n5）檢查網路連接是否正常\n如果以上步驟全部嘗試後仍無法訪問，請發信至 cs@mcmarkets.com 附上UID、瀏覽器版本、是否使用VPN和截圖。"},
+  {q:"錢包連接失敗怎麼辦",tags:["錢包連不上","連接失敗","MetaMask"],a:"排查步驟：\n1）確認錢包已解鎖，並切換到Arbitrum One網路\n2）檢查瀏覽器是否屏蔽了錢包彈窗\n3）在錢包設置中斷開MC Markets站點，重新連接\n4）確認錢包插件已更新到最新版本\n5）如果使用WalletConnect，確認手機和電腦在同一網路環境下\n如仍無法連接，請發信至 cs@mcmarkets.com 附上UID、錢包名稱版本、瀏覽器信息和截圖。"},
+  {q:"下單失敗怎麼辦",tags:["下單失敗","訂單失敗","order failed"],a:"請先檢查：\n1）餘額是否充足——合約交易需要合約帳戶有USDC，現貨交易需要現貨帳戶有USDC\n2）下單數量是否滿足最小要求（如BTC最小0.0001，名義價值最低$10）\n3）如果資金在另一個帳戶，需要先劃轉\n4）刷新頁面重試\n如果有具體錯誤信息，請截圖發到 cs@mcmarkets.com，附上UID、想下單的幣種、方向、數量和槓桿。"},
+  {q:"充值後餘額沒更新怎麼辦",tags:["充值沒到","餘額沒變","deposit not showing"],a:"區塊鏈充值需要等待網路確認，請按以下步驟檢查：\n1）確認轉帳時選擇的網路和MC Markets充值頁面要求的網路一致\n2）在區塊鏈瀏覽器上用TxHash查詢交易狀態（BTC用blockchain.com，ETH/Arbitrum用etherscan.io或arbiscan.io）\n3）如果交易顯示Pending，請繼續等待\n4）如果交易顯示Success但餘額仍未更新，稍等幾分鐘刷新頁面\n如確認完成超過1小時仍未到帳，請發信至 cs@mcmarkets.com 附上TxHash、幣種、金額、網路和時間。"},
+  {q:"提現一直沒到帳怎麼辦",tags:["提現沒到","提幣卡住","withdrawal stuck"],a:"請先檢查平台端提現狀態：\n1）在MC Markets提現記錄中查看訂單狀態——如果顯示「處理中」，快速提現通常2小時內，大額提現24小時內審核\n2）如果顯示「已完成」，用TxHash在區塊鏈瀏覽器上確認鏈上交易狀態\n3）如果鏈上也顯示成功但接收錢包沒到帳，可能是接收端的問題\n如果平台端顯示處理中超過24小時，請發信至 cs@mcmarkets.com 附上提現訂單ID、幣種、金額、目標錢包地址和截圖。"},
+  {q:"2FA驗證碼不對怎麼辦",tags:["2FA錯誤","驗證碼不對","authenticator"],a:"請先嘗試：\n1）檢查手機時間是否自動同步——Google Authenticator依賴設備時間，請到手機設置裡開啟「自動設置時間」\n2）確認選的是MC Markets對應的驗證碼，不要和其他平台搞混\n3）驗證碼有30秒有效期，如果快過期了就等下一個再輸入\n如果Authenticator被刪除或手機丟失，需要人工協助重置2FA，請發信至 cs@mcmarkets.com 說明情況，我們會要求進行身份驗證後處理。"},
+  {q:"頁面顯示異常怎麼辦",tags:["頁面顯示異常","數據不更新","界面錯亂"],a:"請嘗試：\n1）強制刷新頁面（Windows：Ctrl+Shift+R，Mac：Cmd+Shift+R）\n2）清除瀏覽器緩存後重新打開\n3）換一個瀏覽器試試，推薦Chrome最新版\n如果其他用戶也反映同樣問題，可能是平台正在維護。以上都試過還是異常，請附上UID、異常截圖、瀏覽器版本和問題頁面發到 cs@mcmarkets.com。"},
+  {q:"充錯網路了怎麼辦",tags:["充錯鏈","轉錯網路"],a:"請盡快發信至 cs@mcmarkets.com，附上：\n1）交易哈希TxHash\n2）您使用的網路和正確應使用的網路\n3）充值金額和幣種\n4）您的MC Markets帳戶信息\n我們的技術團隊會評估是否有可能協助找回，但無法保證。區塊鏈交易具有不可逆性，請務必在每次轉帳前仔細確認網路！"},
+];
+
+const allData = [];
+Object.entries(KB).forEach(([id,cat]) => cat.items.forEach(it => allData.push({id,chapter:cat.title,...it})));
+TICKET_DATA.forEach(it => allData.push({id:'ticket',chapter:'📧 工單模板',...it}));
+TROUBLE_DATA.forEach(it => allData.push({id:'trouble',chapter:'🔧 問題排查',...it}));
+
+function renderItems(items,pid) {
+  return items.map((it,i)=>`
+    <div class="kb-card">
+      <div class="kb-hdr" onclick="tog('${pid}',${i})">
+        <div><div class="kb-ttl">${it.q}</div><div class="kb-sub">${it.tags.slice(0,3).join(' · ')}</div></div>
+        <div class="kb-arr" id="arr-${pid}-${i}">▼</div>
+      </div>
+      <div class="kb-body" id="kb-${pid}-${i}">
+        <div class="qa-tags">${it.tags.map(t=>`<span class="qa-tag">${t}</span>`).join('')}</div>
+        <div class="qa-a">${it.a.replace(/\n/g,'<br>')}</div>
+      </div>
+    </div>`).join('');
+}
+
+function tog(pid,i) {
+  const b=document.getElementById(`kb-${pid}-${i}`);
+  const a=document.getElementById(`arr-${pid}-${i}`);
+  b.classList.toggle('open'); a.classList.toggle('open');
+}
+
+let navHistory = ['home'];
+
+function go(id) {
+  if(navHistory[navHistory.length-1] !== id) navHistory.push(id);
+  document.getElementById('si').value='';
+  ['pg-search','pg-home','pg-scenarios','pg-ticket','pg-trouble','pg-contact','pg-knowledge'].forEach(p=>document.getElementById(p).classList.add('hidden'));
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(el=>{if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes(`'${id}'`))el.classList.add('active');});
+  if(id==='home'){document.getElementById('pg-home').classList.remove('hidden');}
+  else if(id==='scenarios'){document.getElementById('pg-scenarios').classList.remove('hidden');}
+  else if(id==='ticket'){
+    document.getElementById('pg-ticket').classList.remove('hidden');
+    document.getElementById('ticket-content').innerHTML=renderItems(TICKET_DATA,'ticket');
+  }
+  else if(id==='trouble'){
+    document.getElementById('pg-trouble').classList.remove('hidden');
+    document.getElementById('trouble-content').innerHTML=renderItems(TROUBLE_DATA,'trouble');
+  }
+  else if(id==='contact'){document.getElementById('pg-contact').classList.remove('hidden');}
+  else if(KB[id]){
+    const cat=KB[id];
+    document.getElementById('pg-ktitle').textContent=cat.title;
+    document.getElementById('pg-kbody').innerHTML=renderItems(cat.items,id);
+    document.getElementById('pg-knowledge').classList.remove('hidden');
+  }
+}
+
+function goBack() {
+  if(navHistory.length > 1) { navHistory.pop(); go(navHistory.pop()); }
+  else go('home');
+}
+
+function search() {
+  const q=document.getElementById('si').value.trim();
+  if(!q){go('home');return;}
+  ['pg-home','pg-scenarios','pg-ticket','pg-trouble','pg-contact','pg-knowledge'].forEach(p=>document.getElementById(p).classList.add('hidden'));
+  document.getElementById('pg-search').classList.remove('hidden');
+  document.getElementById('skw').textContent=q;
+  const ql=q.toLowerCase();
+  const res=allData.filter(it=>it.q.toLowerCase().includes(ql)||it.a.toLowerCase().includes(ql)||it.tags.some(t=>t.toLowerCase().includes(ql)));
+  document.getElementById('scnt').textContent=`找到 ${res.length} 個結果`;
+  const container=document.getElementById('sr');
+  if(!res.length){container.innerHTML=`<div class="no-res">😕 找不到「${q}」相關內容<br>試試其他關鍵字</div>`;return;}
+  container.innerHTML=res.map(r=>`
+    <div class="ri">
+      <div class="ri-ch">${r.chapter}</div>
+      <div class="ri-q">${r.q}</div>
+      <div class="ri-a">${r.a.replace(/\n/g,' ').substring(0,200)}${r.a.length>200?'...':''}</div>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>
